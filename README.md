@@ -6,7 +6,7 @@ Anda diminta tolong oleh teman anda untuk mengembalikan filenya yang telah dienk
 Hint: Base64, Hexdump
 
 * Unzip file nature yang telah di download
-* Buat bash script seperti di bawah
+* Buat script bash seperti di bawah
 
 ```
 #!/bin/bash
@@ -21,6 +21,7 @@ done
 ```
 
 * Atur crontab agar script berjalan pada pukul 14:14 pada tanggal 14 Februari atau hari tersebut adalah hari jumat pada bulan Februari.
+
 ```
 crontab -e
 
@@ -54,7 +55,7 @@ echo "--Outdoor Protection"
 awk -F, 'NR > 1 && $7 == "2012" && $1 == "United States" && $4 == "Outdoor Protection" {arr[$6]+=$10} END {for (i in arr) {print arr[i],i}}' WA_Sales_Products_2012-14.csv | sort -nrk1 | awk '{print $1 " " $2 " " $3 " " $4} NR==3{exit}'
 ```
 
-Untuk bash script gabungan nya seperti di bawah ini:
+Untuk script bash gabungannya seperti di bawah ini:
 
 ```
 #!/usr/bin/awk
@@ -86,7 +87,7 @@ c. Urutan nama file tidak boleh ada yang terlewatkan meski filenya dihapus.
 
 d. Password yang dihasilkan tidak boleh sama.
 
-* Buat bash script untuk mengacak huruf dan angka
+* Buat script bash untuk mengacak huruf dan angka
 
 ```
 #!/bin/bash
@@ -121,7 +122,8 @@ fname="$file$numb.txt"
 echo $password > "$fname"
 ```
 
-* Di bawah ini merupakan script gabungan nya
+* Di bawah ini merupakan script gabungannya
+
 ```
 #!/bin/bash
 
@@ -165,8 +167,36 @@ d. Backup file syslog setiap jam.
 
 e. dan buatkan juga bash script untuk dekripsinya.
 
+* Buat script bash seperti di bawah ini :
+
 ```
-Give an example
+#!/bin/bash
+
+tanggal=$(date +"%H:%M %d-%m-%Y")
+jam=$(date +"%H")
+
+if [[ ${jam:0:1} -eq 0 ]]
+then
+    jam=${jam:1:1}
+fi
+
+syslog=$(</var/log/syslog)
+
+lowcase=abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz
+syslog=$(echo "$syslog" | tr "${lowcase:0:26}" "${lowcase:${jam}:26}")
+
+upcase=ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ
+syslog=$(echo "$syslog" | tr "${upcase:0:26}" "${upcase:${jam}:26}")
+
+echo "$syslog" > "$tanggal".log
+```
+
+* Atur crontab agar script berjalan setiap jam
+
+```
+crontab -e
+
+*/60 * * * * /bin/bash /home/izzah/soal4.sh
 ```
 
 ### Soal 5
@@ -181,7 +211,7 @@ c. Masukkan record tadi ke dalam file logs yang berada pada direktori /home/[use
 
 d. Jalankan script tadi setiap 6 menit dari menit ke 2 hingga 30, contoh 13:02, 13:08, 13:14, dst.
 
-* Buat bash script seperti di bawah
+* Buat script bash seperti di bawah
 
 ```
 #!/usr/bin/awk 
