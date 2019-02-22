@@ -20,7 +20,7 @@ do
 done
 ```
 
-* Atur crontab
+* Atur crontab agar script berjalan pada pukul 14:14 pada tanggal 14 Februari atau hari tersebut adalah hari jumat pada bulan Februari.
 ```
 crontab -e
 
@@ -179,7 +179,7 @@ b. Jumlah field (number of field) pada baris tersebut berjumlah kurang dari 13.
 
 c. Masukkan record tadi ke dalam file logs yang berada pada direktori /home/[user]/modul1.
 
-d.Jalankan script tadi setiap 6 menit dari menit ke 2 hingga 30, contoh 13:02, 13:08, 13:14, dst.
+d. Jalankan script tadi setiap 6 menit dari menit ke 2 hingga 30, contoh 13:02, 13:08, 13:14, dst.
 
 * Buat bash script seperti di bawah
 
@@ -189,7 +189,7 @@ d.Jalankan script tadi setiap 6 menit dari menit ke 2 hingga 30, contoh 13:02, 1
 awk '/cron/ || /CRON/,!/sudo/' /var/log/syslog | awk 'NF < 13 {print}' >> /home/izzah/modul1/logsoal5.log
 ```
 
-* Atur crontab nya
+* Atur crontab agar script berjalan setiap 6 menit dari menit ke 2 hingga 30
 
 ```
 crontab -e
