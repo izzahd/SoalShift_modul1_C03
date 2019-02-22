@@ -7,3 +7,5 @@ do
         mv ~/"foto"$number".jpg" ~/nature
         let number++
 done
+
+crontab: 14 14 14 2 5 /bin/bash /home/izzah/satu.sh
