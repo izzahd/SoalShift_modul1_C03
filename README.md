@@ -54,6 +54,26 @@ echo "--Outdoor Protection"
 awk -F, 'NR > 1 && $7 == "2012" && $1 == "United States" && $4 == "Outdoor Protection" {arr[$6]+=$10} END {for (i in arr) {print arr[i],i}}' WA_Sales_Products_2012-14.csv | sort -nrk1 | awk '{print $1 " " $2 " " $3 " " $4} NR==3{exit}'
 ```
 
+Untuk bash script gabungan nya seperti di bawah ini:
+
+```
+#!/usr/bin/awk
+
+echo "a"
+awk -F, 'NR > 1 && $7 == "2012" {arr[$1]+=$10} END {for (i in arr) {print arr[i], i}}' WA_Sales_Products_2012-14.csv | sort -nrk1 | awk '{print $1 " " $2 " " $3} NR==1{exit}'
+
+echo "b"
+awk -F, 'NR > 1 && $7 == "2012" && $1 == "United States" {arr[$4]+=$10} END {for (i in arr) {print arr[i], i}}' WA_Sales_Products_2012-14.csv | sort -nrk1 | awk '{print $1 " " $2 " " $3} NR==3{exit}'
+
+echo "c"
+echo "--Personal Accessories"
+awk -F, 'NR > 1 && $7 == "2012" && $1 == "United States" && $4 == "Personal Accessories" {arr[$6]+=$10} END {for (i in arr) {print arr[i],i}}' WA_Sales_Products_2012-14.csv | sort -nrk1 | awk '{print $1 " " $2 " " $3 " " $4} NR==3{exit}'
+echo "--Camping Equipment"
+awk -F, 'NR > 1 && $7 == "2012" && $1 == "United States" && $4 == "Camping Equipment" {arr[$6]+=$10} END {for (i in arr) {print arr[i],i}}' WA_Sales_Products_2012-14.csv | sort -nrk1 | awk '{print $1 " " $2 " " $3 " " $4} NR==3{exit}'
+echo "--Outdoor Protection"
+awk -F, 'NR > 1 && $7 == "2012" && $1 == "United States" && $4 == "Outdoor Protection" {arr[$6]+=$10} END {for (i in arr) {print arr[i],i}}' WA_Sales_Products_2012-14.csv | sort -nrk1 | awk '{print $1 " " $2 " " $3 " " $4} NR==3{exit}'
+```
+
 ### Soal 3
 
 Buatlah sebuah script bash yang dapat menghasilkan password secara acak sebanyak 12 karakter yang terdapat huruf besar, huruf kecil, dan angka. Password acak tersebut disimpan pada file berekstensi .txt dengan ketentuan pemberian nama sebagai berikut:
@@ -66,7 +86,42 @@ c. Urutan nama file tidak boleh ada yang terlewatkan meski filenya dihapus.
 
 d. Password yang dihasilkan tidak boleh sama.
 
+* Buat bash script untuk mengacak huruf dan angka
 
+```
+#!/bin/bash
+
+length=12
+digits=({0..9})
+lower=({a..z})
+upper=({A..Z})
+CharArray=(${digits[*]} ${lower[*]} ${upper[*]})
+ArrayLength=${#CharArray[*]}
+password=""
+for i in `seq 1 $length`
+do
+        index=$(($RANDOM%$ArrayLength))
+        char=${CharArray[$index]}
+        password=${password}${char}
+done 
+```
+
+* Lanjutkan script untuk increment nama file yang akan diisi password yang sudah dibuat tadi
+
+```
+file=password
+numb=1
+
+while test -e "$file$numb.txt"; do
+        (( ++numb ))
+done
+
+fname="$file$numb.txt"
+
+echo $password > "$fname"
+```
+
+* Di bawah ini merupakan script gabungan nya
 ```
 #!/bin/bash
 
@@ -126,11 +181,18 @@ c. Masukkan record tadi ke dalam file logs yang berada pada direktori /home/[use
 
 d.Jalankan script tadi setiap 6 menit dari menit ke 2 hingga 30, contoh 13:02, 13:08, 13:14, dst.
 
+* Buat bash script seperti di bawah
 
 ```
 #!/usr/bin/awk 
 
 awk '/cron/ || /CRON/,!/sudo/' /var/log/syslog | awk 'NF < 13 {print}' >> /home/izzah/modul1/logsoal5.log
+```
 
-crontab: 2-30/6 * * * * /bin/bash /home/izzah/lima.sh
+* Atur crontab nya
+
+```
+crontab -e
+
+2-30/6 * * * * /bin/bash /home/izzah/lima.sh
 ```
