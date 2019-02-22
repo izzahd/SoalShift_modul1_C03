@@ -5,6 +5,9 @@
 Anda diminta tolong oleh teman anda untuk mengembalikan filenya yang telah dienkripsi oleh seseorang menggunakan bash script, file yang dimaksud adalah nature.zip. Karena terlalu mudah kalian memberikan syarat akan membuka seluruh file tersebut jika pukul 14:14 pada tanggal 14 Februari atau hari tersebut adalah hari jumat pada bulan Februari.
 Hint: Base64, Hexdump
 
+* Unzip file nature yang telah di download
+* Buat bash script seperti di bawah
+
 ```
 #!/bin/bash
 
@@ -15,8 +18,13 @@ do
         mv ~/"foto"$number".jpg" ~/nature
         let number++
 done
+```
 
-crontab: 14 14 14 2 5 /bin/bash /home/izzah/satu.sh
+* Atur crontab
+```
+crontab -e
+
+14 14 14 2 5 /bin/bash /home/izzah/satu.sh
 ```
 
 ### Soal 2
