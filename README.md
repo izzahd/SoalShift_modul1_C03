@@ -6,77 +6,110 @@ Anda diminta tolong oleh teman anda untuk mengembalikan filenya yang telah dienk
 Hint: Base64, Hexdump
 
 ```
-Give examples
+#!/bin/bash
+
+number=1
+for file in "nature/"*
+do
+        base64 -d "$file" | xxd -r > "foto"$number".jpg"
+        mv ~/"foto"$number".jpg" ~/nature
+        let number++
+done
+
+crontab: 14 14 14 2 5 /bin/bash /home/izzah/satu.sh
 ```
 
-### Installing
+### Soal 2
 
-A step by step series of examples that tell you how to get a development env running
+Anda merupakan pegawai magang pada sebuah perusahaan retail, dan anda diminta untuk memberikan laporan berdasarkan file WA_Sales_Products_2012-14.csv. Laporan yang diminta berupa:
 
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
+a.	Tentukan negara dengan penjualan(quantity) terbanyak pada tahun 2012.
 
 ```
-until finished
+awk -F, 'NR > 1 && $7 == "2012" {arr[$1]+=$10} END {for (i in arr) {print arr[i], i}}' WA_Sales_Products_2012-14.csv | sort -nrk1 | awk '{print $1 " " $2 " " $3} NR==1{exit}'
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+b.	Tentukan tiga product line yang memberikan penjualan(quantity) terbanyak pada soal poin a.
 
-## Running the tests
+```
+awk -F, 'NR > 1 && $7 == "2012" && $1 == "United States" {arr[$4]+=$10} END {for (i in arr) {print arr[i], i}}' WA_Sales_Products_2012-14.csv | sort -nrk1 | awk '{print $1 " " $2 " " $3} NR==3{exit}'
+```
 
-Explain how to run the automated tests for this system
+c.	Tentukan tiga product yang memberikan penjualan(quantity) terbanyak berdasarkan tiga product line yang didapatkan pada soal poin b.
 
-### Break down into end to end tests
+```
+echo "--Personal Accessories"
+awk -F, 'NR > 1 && $7 == "2012" && $1 == "United States" && $4 == "Personal Accessories" {arr[$6]+=$10} END {for (i in arr) {print arr[i],i}}' WA_Sales_Products_2012-14.csv | sort -nrk1 | awk '{print $1 " " $2 " " $3 " " $4} NR==3{exit}'
+echo "--Camping Equipment"
+awk -F, 'NR > 1 && $7 == "2012" && $1 == "United States" && $4 == "Camping Equipment" {arr[$6]+=$10} END {for (i in arr) {print arr[i],i}}' WA_Sales_Products_2012-14.csv | sort -nrk1 | awk '{print $1 " " $2 " " $3 " " $4} NR==3{exit}'
+echo "--Outdoor Protection"
+awk -F, 'NR > 1 && $7 == "2012" && $1 == "United States" && $4 == "Outdoor Protection" {arr[$6]+=$10} END {for (i in arr) {print arr[i],i}}' WA_Sales_Products_2012-14.csv | sort -nrk1 | awk '{print $1 " " $2 " " $3 " " $4} NR==3{exit}'
+```
 
-Explain what these tests test and why
+### Soal 3
+
+3.	Buatlah sebuah script bash yang dapat menghasilkan password secara acak sebanyak 12 karakter yang terdapat huruf besar, huruf kecil, dan angka. Password acak tersebut disimpan pada file berekstensi .txt dengan ketentuan pemberian nama sebagai berikut:
+a.	Jika tidak ditemukan file password1.txt maka password acak tersebut disimpan pada file bernama password1.txt
+b.	Jika file password1.txt sudah ada maka password acak baru akan disimpan pada file bernama password2.txt dan begitu seterusnya.
+c.	Urutan nama file tidak boleh ada yang terlewatkan meski filenya dihapus.
+d.	Password yang dihasilkan tidak boleh sama.
+
+
+```
+#!/bin/bash
+
+length=12
+digits=({0..9})
+lower=({a..z})
+upper=({A..Z})
+CharArray=(${digits[*]} ${lower[*]} ${upper[*]})
+ArrayLength=${#CharArray[*]}
+password=""
+for i in `seq 1 $length`
+do
+        index=$(($RANDOM%$ArrayLength))
+        char=${CharArray[$index]}
+        password=${password}${char}
+done 
+
+file=password
+numb=1
+
+while test -e "$file$numb.txt"; do
+        (( ++numb ))
+done
+
+fname="$file$numb.txt"
+
+echo $password > "$fname"
+```
+
+### Soal 4
+
+4.	Lakukan backup file syslog setiap jam dengan format nama file “jam:menit tanggal-bulan-tahun”. Isi dari file backup terenkripsi dengan konversi huruf (string manipulation) yang disesuaikan dengan jam dilakukannya backup misalkan sebagai berikut:
+a.	Huruf b adalah alfabet kedua, sedangkan saat ini waktu menunjukkan pukul 12, sehingga huruf b diganti dengan huruf alfabet yang memiliki urutan ke 12+2 = 14.
+b.	Hasilnya huruf b menjadi huruf n karena huruf n adalah huruf ke empat belas, dan seterusnya. 
+c.	setelah huruf z akan kembali ke huruf a
+d.	Backup file syslog setiap jam.
+e.	dan buatkan juga bash script untuk dekripsinya.
 
 ```
 Give an example
 ```
 
-### And coding style tests
+### Soal 5
 
-Explain what these tests test and why
+5.	Buatlah sebuah script bash untuk menyimpan record dalam syslog yang memenuhi kriteria berikut:
+a.	Tidak mengandung string “sudo”, tetapi mengandung string “cron”, serta buatlah pencarian stringnya tidak bersifat case sensitive, sehingga huruf kapital atau tidak, tidak menjadi masalah.
+b.	Jumlah field (number of field) pada baris tersebut berjumlah kurang dari 13.
+c.	Masukkan record tadi ke dalam file logs yang berada pada direktori /home/[user]/modul1.
+d.	Jalankan script tadi setiap 6 menit dari menit ke 2 hingga 30, contoh 13:02, 13:08, 13:14, dst.
+
 
 ```
-Give an example
+#!/usr/bin/awk 
+
+awk '/cron/ || /CRON/,!/sudo/' /var/log/syslog | awk 'NF < 13 {print}' >> /home/izzah/modul1/logsoal5.log
+
+crontab: 2-30/6 * * * * /bin/bash /home/izzah/lima.sh
 ```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
